@@ -1,8 +1,11 @@
 """
-plot_drawer.py: Module for drawing 2D plots with given coordinates
+drawer.py: Module for drawing 2D plots with given coordinates
 """
 
+import sys
+from math import floor, ceil
 import matplotlib.pyplot as plt
+from drawer import CLI
 
 
 def draw_plot(x_set: list, y_set: list, filename=None,
@@ -31,18 +34,19 @@ def draw_plot(x_set: list, y_set: list, filename=None,
 
     # TODO: handle properly
     assert len(x_set) == len(y_set)
+    # TODO: x!, x = [-1000, 1000]
     line = plt.plot(x_set, y_set)
 
     # Max and min values for axis
-    if not min_x:
-        min_x = min(x_set)
-    if not max_x:
-        max_x = max(x_set)
-    if not min_y:
-        min_y = min(y_set)
-    if not max_y:
-        max_y = max(y_set)
-    plt.axis([min_x, max_x, min_y, max_y])
+    # if not min_x:
+    #     min_x = min(x_set)
+    # if not max_x:
+    #     max_x = max(x_set)
+    # if not min_y:
+    #     min_y = min(filter(lambda x: x is not None, y_set))
+    # if not max_y:
+    #     max_y = max(filter(lambda x: x is not None, y_set))
+    # plt.axis([min_x, max_x, min_y, max_y])
 
     # Title of a plot
     if title:
@@ -81,8 +85,9 @@ def get_xs(min_value, max_value, precision=1.0) -> list:
                       Less value means more accurate calculation
     :return: list contains x coordinates
     """
-    multiplier = int(precision ** (-1))
-    return [x / multiplier for x in range(int(min_value * multiplier), int(max_value * multiplier) + multiplier)]
+    multiplier = precision ** (-1)
+    return [x / multiplier
+            for x in range(int(int(floor(min_value)) * multiplier), int(multiplier * (int(ceil(max_value)) + 1)))]
 
 
 def get_ys(x_set: list, func) -> list:
@@ -93,16 +98,33 @@ def get_ys(x_set: list, func) -> list:
     :param func: function used to calculate y
     :return: list contains y coordinates
     """
-    return [func(x) for x in x_set]
+    ys = []
+    for x in x_set:
+        try:
+            y = func(x)
+
+        except (ValueError, ZeroDivisionError) as e:
+            CLI.print_debug(str(x) + " " + str(e))
+            y = None
+
+        except OverflowError as e:
+            CLI.print_debug(e)
+            y = None
+            print("Result for x={} is too big!".format(x))
+            # break
+
+        ys.append(y)
+
+    return ys
+
+
+def _do_nothing():
+    pass
+
+
+def main():
+    CLI.main()
 
 
 if __name__ == "__main__":
-
-    def f(x):
-        return 6 * (1 - (x / -1.5)) ** 2
-
-    xs = get_xs(-1.8, 0, 0.01)
-    ys = get_ys(xs, f)
-
-    draw_plot(xs, ys, filename=None,
-              title="Title", xlabel="x", ylabel="y", legend="line")
+    main()

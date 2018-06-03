@@ -1,16 +1,21 @@
 # PlotDrawer
 A simple script to draw plots with given coordinates
 
-### Uses
+### Dependencies
 matplotlib
 
 ### Usage
-1. Download script
-2. Edit main part to get desirable x and y lists
-3. Edit plot parameters
-4. Run
+1. Run CLI.py
+2. Follow instructions
+
+### Run parameters
+* --debug: enable additional debugging messages
 
 ### TODO:
-1. CLI
-2. Support of multiple lines
-3. 3D maybe
+1. CLI - almost done
+2. GUI?
+3. Support of multiple lines
+4. 3D maybe
+
+### Current problems:
+1. Doesn't work well with discontinued functions
